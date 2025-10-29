@@ -57,6 +57,7 @@ gSpecials::
 	def_special SpawnLinkPartnerObjectEvent
 	def_special SavePlayerParty
 	def_special LoadPlayerParty
+	def_special LoadPlayerPartyAfterLinkMultiBattle @ EMERALD MULTIPLAYER TODO: NECESSARY?
 	def_special ChooseHalfPartyForBattle
 	def_special Script_ShowLinkTrainerCard
 	def_special ObjectEventInteractionGetBerryTreeData
@@ -564,3 +565,6 @@ gSpecials::
 	def_special EnterCode
 	def_special GetCodeFeedback
 	def_special SetHiddenNature
+	def_special DoLinkMultiBattle
+	def_special IsLinkConnectionEstablished
+	@ def_special MixRandomizers

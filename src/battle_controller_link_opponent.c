@@ -120,7 +120,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battler)
     bool32 healthboxAnimDone = FALSE;
     bool32 twoMons = FALSE;
 
-    if (!IsDoubleBattle() || (IsDoubleBattle() && (gBattleTypeFlags & BATTLE_TYPE_MULTI)))
+    if (!IsDoubleBattle() || (IsDoubleBattle() && (gBattleTypeFlags & BATTLE_TYPE_MULTI) && !(BATTLE_TYPE_MULTIPLAYER_2_VS_1 && TwoOpponentIntroMons(battler))))
     {
         if (gSprites[gHealthboxSpriteIds[battler]].callback == SpriteCallbackDummy)
             healthboxAnimDone = TRUE;
@@ -137,7 +137,7 @@ static void Intro_WaitForShinyAnimAndHealthbox(u32 battler)
 
     if (healthboxAnimDone)
     {
-        if (twoMons || !IsBattlerSpriteVisible(BATTLE_PARTNER(battler)))
+        if (twoMons || (!IsBattlerSpriteVisible(BATTLE_PARTNER(battler)) && !(BATTLE_TYPE_MULTIPLAYER_2_VS_1 && !TwoOpponentIntroMons(battler))))
         {
             if (!gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim)
                 return;
@@ -183,7 +183,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battler)
     {
         TryShinyAnimation(battler, GetBattlerMon(battler));
     }
-    if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI)
+    if ((!(gBattleTypeFlags & BATTLE_TYPE_MULTI) || (BATTLE_TYPE_MULTIPLAYER_2_VS_1 && TwoOpponentIntroMons(battler)))
         && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battler)].ballAnimActive
         && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battler)].triedShinyMonAnim
         && !gBattleSpritesDataPtr->healthBoxesData[BATTLE_PARTNER(battler)].finishedShinyMonAnim)
@@ -195,7 +195,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battler)
     {
         if (!gBattleSpritesDataPtr->healthBoxesData[battler].healthboxSlideInStarted)
         {
-            if (IsDoubleBattle() && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+            if (IsDoubleBattle() && (!(gBattleTypeFlags & BATTLE_TYPE_MULTI) || (BATTLE_TYPE_MULTIPLAYER_2_VS_1 && TwoOpponentIntroMons(battler))))
             {
                 UpdateHealthboxAttribute(gHealthboxSpriteIds[BATTLE_PARTNER(battler)], GetBattlerMon(BATTLE_PARTNER(battler)), HEALTHBOX_ALL);
                 StartHealthboxSlideIn(BATTLE_PARTNER(battler));
@@ -242,7 +242,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battler)
                 gBattleSpritesDataPtr->healthBoxesData[battler].introEndDelay = 0;
             }
 
-            if (IsDoubleBattle() && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+            if (IsDoubleBattle() && (!(gBattleTypeFlags & BATTLE_TYPE_MULTI) || (BATTLE_TYPE_MULTIPLAYER_2_VS_1 && TwoOpponentIntroMons(battler))))
             {
                 DestroySprite(&gSprites[gBattleControllerData[BATTLE_PARTNER(battler)]]);
                 SetBattlerShadowSpriteCallback(BATTLE_PARTNER(battler), GetMonData(GetBattlerMon(BATTLE_PARTNER(battler)), MON_DATA_SPECIES));
@@ -284,12 +284,28 @@ static void LinkOpponentHandleDrawTrainerPic(u32 battler)
 
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
-        if ((GetBattlerPosition(battler) & BIT_FLANK) != 0) // second mon
+        if (gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER && !(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
+            xPos = 176;
+        else if ((GetBattlerPosition(battler) & BIT_FLANK) != 0) // second mon
             xPos = 152;
         else // first mon
             xPos = 200;
 
-        if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
+        if (gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER)
+        {
+            if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+            {
+                if (battler == B_POSITION_OPPONENT_LEFT)
+                    trainerPicId = GetTrainerPicFromId(TRAINER_BATTLE_PARAM.opponentA);
+                else
+                    trainerPicId = GetTrainerPicFromId(TRAINER_BATTLE_PARAM.opponentB);
+            }
+            else
+            {
+                trainerPicId = GetTrainerPicFromId(TRAINER_BATTLE_PARAM.opponentA);
+            }
+        }
+        else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
         {
             if (battler == B_POSITION_OPPONENT_LEFT)
                 trainerPicId = GetFrontierTrainerFrontSpriteId(TRAINER_BATTLE_PARAM.opponentA);
@@ -356,10 +372,25 @@ static void LinkOpponentHandleTrainerSlide(u32 battler)
 {
     u32 trainerPicId;
 
-    if (battler == B_POSITION_OPPONENT_LEFT)
-        trainerPicId = GetFrontierTrainerFrontSpriteId(TRAINER_BATTLE_PARAM.opponentA);
+    if (gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER)
+    {
+        if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+        {
+            if (battler == B_POSITION_OPPONENT_LEFT)
+                trainerPicId = GetTrainerPicFromId(TRAINER_BATTLE_PARAM.opponentA);
+            else
+                trainerPicId = GetTrainerPicFromId(TRAINER_BATTLE_PARAM.opponentB);
+        }
+        else
+            trainerPicId = GetTrainerPicFromId(TRAINER_BATTLE_PARAM.opponentA);
+    }
     else
-        trainerPicId = GetFrontierTrainerFrontSpriteId(TRAINER_BATTLE_PARAM.opponentB);
+    {
+        if (battler == B_POSITION_OPPONENT_LEFT)
+            trainerPicId = GetFrontierTrainerFrontSpriteId(TRAINER_BATTLE_PARAM.opponentA);
+        else
+            trainerPicId = GetFrontierTrainerFrontSpriteId(TRAINER_BATTLE_PARAM.opponentB);
+    }
 
     BtlController_HandleTrainerSlide(battler, trainerPicId);
     BtlController_Complete(battler); // Possibly a bug, because execution should be completed after the slide in finishes. See Controller_WaitForTrainerPic.

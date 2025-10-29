@@ -6,13 +6,16 @@
 #include "battle_interface.h"
 #include "battle_message.h"
 #include "battle_setup.h"
+#include "battle_script_commands.h"
 #include "battle_tower.h"
 #include "battle_tv.h"
 #include "bg.h"
 #include "data.h"
+#include "load_save.h"
 #include "link.h"
 #include "main.h"
 #include "m4a.h"
+#include "money.h"
 #include "palette.h"
 #include "pokeball.h"
 #include "pokemon.h"
@@ -186,4 +189,18 @@ static void LinkPartnerHandleEndLinkBattle(u32 battler)
     BeginFastPaletteFade(3);
     BtlController_Complete(battler);
     gBattlerControllerFuncs[battler] = SetBattleEndCallbacks;
+
+    LoadPlayerPartyAfterLinkMultiBattle();
+
+    if (gBattleOutcome == B_OUTCOME_WON)
+    {
+        u32 money;
+
+        gBattleStruct->moneyMultiplier = 1;
+
+        money = GetTrainerMoneyToGive(TRAINER_BATTLE_PARAM.opponentA);
+        if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+            money += GetTrainerMoneyToGive(TRAINER_BATTLE_PARAM.opponentB);
+        AddMoney(&gSaveBlock1Ptr->money, money);
+    }
 }

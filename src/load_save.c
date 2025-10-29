@@ -195,6 +195,65 @@ void LoadPlayerParty(void)
     }
 }
 
+static bool8 IsPokemonInParty(struct Pokemon *party, struct Pokemon *mon)
+{
+    int i;
+    u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, 0);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&party[i], MON_DATA_PERSONALITY, 0) == personality)
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+void LoadPlayerPartyAfterLinkMultiBattle(void) 
+{
+    int i = 0, slot = 0;
+
+    if (IsPokemonInParty(gSaveBlock1Ptr->playerParty, &gPlayerParty[i]))
+    {
+        while (slot < PARTY_SIZE / 2 && GetMonData(&gPlayerParty[slot], MON_DATA_SPECIES, 0) != SPECIES_NONE)
+        {
+            slot++;
+        }
+    }
+    else
+    {
+        while (slot < PARTY_SIZE / 2 && GetMonData(&gPlayerParty[slot + PARTY_SIZE / 2], MON_DATA_SPECIES, 0) != SPECIES_NONE)
+        {
+            gPlayerParty[slot] = gPlayerParty[slot + PARTY_SIZE / 2];
+            slot++;
+        }
+    }
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gSaveBlock1Ptr->playerParty[i];
+
+        if (GetMonData(mon, MON_DATA_SPECIES, 0) == SPECIES_NONE)
+            break;
+
+        if (IsPokemonInParty(gPlayerParty, mon))
+            continue;
+
+        gPlayerParty[slot] = gSaveBlock1Ptr->playerParty[i];
+        slot++;
+    }
+
+    slot = PARTY_SIZE - 1;
+
+    while (GetMonData(&gSaveBlock1Ptr->playerParty[slot], MON_DATA_SPECIES, 0) == SPECIES_NONE)
+    {
+        gPlayerParty[slot] = gSaveBlock1Ptr->playerParty[slot];
+        slot--;
+    }
+
+    gPlayerPartyCount = gSaveBlock1Ptr->playerPartyCount;
+}
+
 void SaveObjectEvents(void)
 {
     int i;

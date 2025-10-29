@@ -15,6 +15,7 @@
 #include "item.h"
 #include "item_menu.h"
 #include "link.h"
+#include "load_save.h"
 #include "main.h"
 #include "m4a.h"
 #include "palette.h"
@@ -1164,6 +1165,40 @@ void HandleMoveSwitching(u32 battler)
     }
 }
 
+static void SetMultiLinkBattleEndCallbacks(u32 battler)
+{
+    if (gWirelessCommType == 0)
+    {
+        if (gReceivedRemoteLinkPlayers == 0)
+        {
+            m4aSongNumStop(SE_LOW_HEALTH);
+            gMain.inBattle = FALSE;
+            gMain.callback1 = gPreBattleCallback1;
+            SetMainCallback2(gMain.savedCallback);
+            ResetSpriteData();
+            FreeAllWindowBuffers();
+            FreeMonSpritesGfx();
+            FreeBattleResources();
+            FreeBattleSpritesData();
+        }
+    }
+    else
+    {
+        if (IsLinkTaskFinished())
+        {
+            m4aSongNumStop(SE_LOW_HEALTH);
+            gMain.inBattle = FALSE;
+            gMain.callback1 = gPreBattleCallback1;
+            SetMainCallback2(gMain.savedCallback);
+            ResetSpriteData();
+            FreeAllWindowBuffers();
+            FreeMonSpritesGfx();
+            FreeBattleResources();
+            FreeBattleSpritesData();
+        }
+    }
+}
+
 static void SetLinkBattleEndCallbacks(u32 battler)
 {
     if (gWirelessCommType == 0)
@@ -1208,7 +1243,7 @@ void SetBattleEndCallbacks(u32 battler)
                 else
                     SetLinkStandbyCallback();
 
-                gBattlerControllerFuncs[battler] = SetLinkBattleEndCallbacks;
+                gBattlerControllerFuncs[battler] = (gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER) ? SetMultiLinkBattleEndCallbacks : SetLinkBattleEndCallbacks;
             }
         }
         else
@@ -2307,6 +2342,8 @@ static void PlayerHandleEndLinkBattle(u32 battler)
     BeginFastPaletteFade(3);
     BtlController_Complete(battler);
     gBattlerControllerFuncs[battler] = SetBattleEndCallbacks;
+
+    LoadPlayerPartyAfterLinkMultiBattle();
 }
 
 static void Controller_WaitForDebug(u32 battler)
