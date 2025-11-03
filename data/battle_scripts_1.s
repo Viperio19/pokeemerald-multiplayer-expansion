@@ -5858,6 +5858,20 @@ BattleScript_DestinyBondTakesLife::
 	tryfaintmon BS_ATTACKER
 	return
 
+BattleScript_LinkedPokemonFaintsOnScreen::
+	printstring STRINGID_PKMNISLINKED
+	waitmessage B_WAIT_TIME_LONG
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_HP_UPDATE
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	tryfaintmon BS_ATTACKER
+	return
+
+BattleScript_LinkedPokemonFaintsOffScreen::
+	printstring STRINGID_LINKEDPKMNFAINTS
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_DmgHazardsOnAttacker::
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_HP_UPDATE
 	healthbarupdate BS_ATTACKER

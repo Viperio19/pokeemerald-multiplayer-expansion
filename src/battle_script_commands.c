@@ -4267,6 +4267,38 @@ static void Cmd_tryfaintmon(void)
                 gBattleStruct->moveDamage[destinyBondBattler] = gBattleMons[destinyBondBattler].hp;
                 gBattlescriptCurrInstr = BattleScript_DestinyBondTakesLife;
             }
+            if (gSaveBlock2Ptr->soullink && gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER && GetBattlerSide(battler) == B_SIDE_PLAYER)
+            {
+                u8 metLocation = GetMonData(GetBattlerMon(battler), MON_DATA_MET_LOCATION, NULL);
+                u32 partner = BATTLE_PARTNER(battler);
+
+                if (metLocation == GetMonData(GetBattlerMon(partner), MON_DATA_MET_LOCATION, NULL) && gBattleMons[partner].hp != 0)
+                {
+                    gBattlerAttacker = partner;
+                    BattleScriptPush(gBattlescriptCurrInstr);
+                    gBattleStruct->moveDamage[gBattlerAttacker] = gBattleMons[gBattlerAttacker].hp;
+                    gBattlescriptCurrInstr = BattleScript_LinkedPokemonFaintsOnScreen;
+                }
+                else
+                {
+                    u8 i;
+                    for (i = 0; i < PARTY_SIZE; i++)
+                    {
+                        if (i != gBattlerPartyIndexes[B_POSITION_PLAYER_LEFT] && i != gBattlerPartyIndexes[B_POSITION_PLAYER_RIGHT]
+                            && metLocation == GetMonData(&gPlayerParty[i], MON_DATA_MET_LOCATION, FALSE))
+                        {
+                            u16 zero = 0;
+                            SetMonData(&gPlayerParty[i], MON_DATA_HP, &zero);
+
+                            GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, gBattleTextBuff1);
+                            StringGet_Nickname(gBattleTextBuff1);
+                            BattleScriptPush(gBattlescriptCurrInstr);
+                            gBattlescriptCurrInstr = BattleScript_LinkedPokemonFaintsOffScreen;
+                            break;
+                        }
+                    }
+                }
+            }
             if (gBattleMons[gBattlerTarget].volatiles.grudge
              && !(gHitMarker & HITMARKER_GRUDGE)
              && !IsBattlerAlly(gBattlerAttacker, gBattlerTarget)

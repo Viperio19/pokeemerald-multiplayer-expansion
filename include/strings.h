@@ -270,6 +270,18 @@ extern const u8 gText_Sound[];
 extern const u8 gText_Frame[];
 extern const u8 gText_OptionMenuCancel[];
 extern const u8 gText_ButtonMode[];
+extern const u8 gText_OptionMenuRandomizer[];
+extern const u8 gText_OptionMenuTrainers[];
+extern const u8 gText_OptionMenuLegendary[];
+extern const u8 gText_OptionMenuWild[];
+extern const u8 gText_OptionMenuStarters[];
+extern const u8 gText_OptionMenuGifts[];
+extern const u8 gText_OptionMenuSoullink[];
+extern const u8 gText_OptionMenuYes[];
+extern const u8 gText_OptionMenuNo[];
+extern const u8 gText_OptionMenuSimilarBST[];
+extern const u8 gText_OptionMenuRandomLegendary[];
+extern const u8 gText_OptionMenuThreeStage[];
 
 extern const u8 gText_MaleSymbol[];
 extern const u8 gText_FemaleSymbol[];

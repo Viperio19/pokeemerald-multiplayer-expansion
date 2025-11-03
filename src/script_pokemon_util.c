@@ -36,7 +36,11 @@ void HealPlayerParty(void)
 {
     u32 i;
     for (i = 0; i < gPlayerPartyCount; i++)
-        HealPokemon(&gPlayerParty[i]);
+    {
+        if (gSaveBlock2Ptr->soullink && GetMonData(&gPlayerParty[i], MON_DATA_HP) == 0)
+            continue;
+        HealPokemon(&gPlayerParty[i]); 
+    }
     if (OW_PC_HEAL >= GEN_8)
         HealPlayerBoxes();
 
@@ -55,7 +59,7 @@ static void HealPlayerBoxes(void)
         for (boxPosition = 0; boxPosition < IN_BOX_COUNT; boxPosition++)
         {
             boxMon = &gPokemonStoragePtr->boxes[boxId][boxPosition];
-            if (GetBoxMonData(boxMon, MON_DATA_SANITY_HAS_SPECIES))
+            if (GetBoxMonData(boxMon, MON_DATA_SANITY_HAS_SPECIES) && !(gSaveBlock2Ptr->soullink && GetBoxMonData(boxMon, MON_DATA_HP) == 0))
                 HealBoxPokemon(boxMon);
         }
     }
@@ -65,6 +69,9 @@ u8 ScriptGiveEgg(u16 species)
 {
     struct Pokemon mon;
     u8 isEgg;
+
+    if (gSaveBlock2Ptr->randomizeGiftPkmn == OPTIONS_RANDOM_YES)
+        species = GetRandomSpecies(species, species, FALSE);
 
     CreateEgg(&mon, species, TRUE);
     isEgg = TRUE;
@@ -338,9 +345,14 @@ static u32 ScriptGiveMonParameterized(u8 side, u8 slot, u16 species, u8 level, u
     int sentToPc;
     struct Pokemon mon;
     u32 i;
-    u8 genderRatio = gSpeciesInfo[species].genderRatio;
+    u8 genderRatio;
     u16 targetSpecies;
     bool32 isShiny;
+
+    if (gSaveBlock2Ptr->randomizeGiftPkmn == OPTIONS_RANDOM_YES && FlagGet(FLAG_ADVENTURE_STARTED)) // don't rerandomize starter pokemon
+        species = GetRandomSpecies(species, species, FALSE);
+
+    genderRatio = gSpeciesInfo[species].genderRatio;
 
     // check whether to use a specific nature or a random one
     if (nature >= NUM_NATURES)

@@ -8765,7 +8765,7 @@ static inline u32 CalcAttackStat(struct DamageContext *ctx)
     return uq4_12_multiply_by_int_half_down(modifier, atkStat);
 }
 
-static bool32 CanEvolve(u32 species)
+bool32 CanEvolve(u32 species)
 {
     u32 i;
     const struct Evolution *evolutions = GetSpeciesEvolutions(species);

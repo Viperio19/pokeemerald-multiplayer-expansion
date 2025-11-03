@@ -82,6 +82,8 @@ extern const u8 BattleScript_SelectingDisabledMoveInPalace[];
 extern const u8 BattleScript_SelectingUnusableMoveInPalace[];
 extern const u8 BattleScript_EncoredNoMore[];
 extern const u8 BattleScript_DestinyBondTakesLife[];
+extern const u8 BattleScript_LinkedPokemonFaintsOnScreen[];
+extern const u8 BattleScript_LinkedPokemonFaintsOffScreen[];
 extern const u8 BattleScript_DmgHazardsOnAttacker[];
 extern const u8 BattleScript_DmgHazardsOnTarget[];
 extern const u8 BattleScript_DmgHazardsOnBattlerScripting[];

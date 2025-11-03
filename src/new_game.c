@@ -90,17 +90,25 @@ static void InitPlayerTrainerId(void)
 {
     u32 trainerId = (Random() << 16) | GetGeneratedTrainerIdLower();
     SetTrainerId(trainerId, gSaveBlock2Ptr->playerTrainerId);
+    gSaveBlock2Ptr->randomizerSeed = gSaveBlock2Ptr->playerTrainerId[0];
 }
 
 // L=A isnt set here for some reason.
 static void SetDefaultOptions(void)
 {
-    gSaveBlock2Ptr->optionsTextSpeed = OPTIONS_TEXT_SPEED_MID;
+    gSaveBlock2Ptr->optionsTextSpeed = OPTIONS_TEXT_SPEED_FAST;
     gSaveBlock2Ptr->optionsWindowFrameType = 0;
-    gSaveBlock2Ptr->optionsSound = OPTIONS_SOUND_MONO;
+    gSaveBlock2Ptr->optionsSound = OPTIONS_SOUND_STEREO;
     gSaveBlock2Ptr->optionsBattleStyle = OPTIONS_BATTLE_STYLE_SHIFT;
     gSaveBlock2Ptr->optionsBattleSceneOff = FALSE;
     gSaveBlock2Ptr->regionMapZoom = FALSE;
+
+    gSaveBlock2Ptr->randomizeTrainerPkmn = OPTIONS_RANDOM_NO;
+    gSaveBlock2Ptr->randomizeWildPkmn = OPTIONS_RANDOM_NO;
+    gSaveBlock2Ptr->randomizeLegendaryPkmn = OPTIONS_RANDOM_NO;
+    gSaveBlock2Ptr->randomizeStarterPkmn = OPTIONS_RANDOM_NO;
+    gSaveBlock2Ptr->randomizeGiftPkmn = OPTIONS_RANDOM_NO;
+    gSaveBlock2Ptr->soullink = FALSE;
 }
 
 static void ClearPokedexFlags(void)
@@ -213,6 +221,7 @@ void NewGameInitData(void)
     ResetItemFlags();
     ResetDexNav();
     ClearFollowerNPCData();
+    EnableNationalPokedex();
 }
 
 static void ResetMiniGamesRecords(void)
