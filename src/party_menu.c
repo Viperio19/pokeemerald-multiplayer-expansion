@@ -3750,12 +3750,18 @@ static void CursorCb_SendMon(u8 taskId)
 
 static void CursorCb_Enter(u8 taskId)
 {
+    u8 aliveMons;
     u8 maxBattlers;
     u8 i;
 
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
     maxBattlers = GetMaxBattleEntries();
+    aliveMons = CountPartyAliveNonEggMonsExcept(PARTY_SIZE + 1);
+
+    if (aliveMons < maxBattlers)
+        maxBattlers = aliveMons;
+
     for (i = 0; i < maxBattlers; i++)
     {
         if (gSelectedOrderFromParty[i] == 0)
