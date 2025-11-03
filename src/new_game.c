@@ -222,6 +222,7 @@ void NewGameInitData(void)
     ResetDexNav();
     ClearFollowerNPCData();
     EnableNationalPokedex();
+    AddBagItem(ITEM_RARER_CANDY, 1);
 }
 
 static void ResetMiniGamesRecords(void)
