@@ -34,6 +34,7 @@ EWRAM_DATA struct SaveBlock3 gSaveblock3 = {};
 EWRAM_DATA struct SaveBlock2ASLR gSaveblock2 = {0};
 EWRAM_DATA struct SaveBlock1ASLR gSaveblock1 = {0};
 EWRAM_DATA struct PokemonStorageASLR gPokemonStorage = {0};
+EWRAM_DATA struct BoxPokemon gPokemonStorageBackupBoxes[TOTAL_BOXES_COUNT][IN_BOX_COUNT] = {0};
 
 EWRAM_DATA struct LoadedSaveData gLoadedSaveData = {0};
 EWRAM_DATA u32 gLastEncryptionKey = 0;
@@ -252,6 +253,30 @@ void LoadPlayerPartyAfterLinkMultiBattle(void)
     }
 
     gPlayerPartyCount = gSaveBlock1Ptr->playerPartyCount;
+}
+
+void SavePlayerBoxes(void)
+{
+    int i = 0, j = 0;
+
+    for (i = 0; i < TOTAL_BOXES_COUNT; i++)
+    {
+        if (CountMonsInBox(i) > 0)
+            AddBagItem(ITEM_POKE_BALL + i, CountMonsInBox(i));
+        for (j = 0; j < IN_BOX_COUNT; j++)
+            gPokemonStorageBackupBoxes[i][j] = gPokemonStoragePtr->boxes[i][j];
+    }
+}
+
+void LoadPlayerBoxes(void)
+{
+    int i = 0, j = 0;
+
+    for (i = 0; i < TOTAL_BOXES_COUNT; i++)
+    {
+        for (j = 0; j < IN_BOX_COUNT; j++)
+            gPokemonStoragePtr->boxes[i][j] = gPokemonStorageBackupBoxes[i][j];
+    }
 }
 
 void SaveObjectEvents(void)
