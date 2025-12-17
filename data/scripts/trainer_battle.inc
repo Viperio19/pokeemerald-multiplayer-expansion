@@ -51,11 +51,9 @@ EventScript_DoNoIntroTrainerBattle::
 	waitmovement 0
 	clearflag FLAG_SAFE_FOLLOWER_MOVEMENT
 	special PlayTrainerEncounterMusic
-	msgbox EventScript_Text_BattleWithOtherPlayer, MSGBOX_YESNO
-	switch VAR_RESULT
-	case YES, LinkMultiBattle_EventScript_TryNoIntroLinkMultiBattle
-	case NO, EventScript_InitiateNoIntroSoloBattle
-	case MULTI_B_PRESSED, EventScript_InitiateNoIntroSoloBattle
+	@ special HasEnoughMonsForDoubleBattle
+	@ goto_if_ne VAR_RESULT, PLAYER_HAS_TWO_USABLE_MONS, EventScript_InitiateNoIntroSoloBattle
+	goto LinkMultiBattle_EventScript_TryNoIntroLinkMultiBattle
 
 EventScript_InitiateNoIntroSoloBattle::
 	message EventScript_Text_InitiatingSoloBattle
@@ -124,11 +122,9 @@ EventScript_ShowTrainerIntroMsg::
 	special TryPrepareSecondApproachingTrainer
 	goto_if_eq VAR_RESULT, TRUE, EventScript_TrainerApproach
 	clearflag FLAG_STEVEN_MULTI_BATTLE
-	msgbox EventScript_Text_BattleWithOtherPlayer, MSGBOX_YESNO
-	switch VAR_RESULT
-	case YES, LinkMultiBattle_EventScript_ChoosePokemon
-	case NO, EventScript_InitiateSoloBattle
-	case MULTI_B_PRESSED, EventScript_InitiateSoloBattle
+	@ special HasEnoughMonsForDoubleBattle
+	@ goto_if_ne VAR_RESULT, PLAYER_HAS_TWO_USABLE_MONS, EventScript_InitiateSoloBattle
+	goto LinkMultiBattle_EventScript_TryConnectForLinkMultiBattle
 
 EventScript_InitiateSoloBattle::
 	message EventScript_Text_InitiatingSoloBattle

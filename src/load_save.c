@@ -176,6 +176,51 @@ void SavePlayerParty(void)
         SavePlayerPartyMon(i, &gPlayerParty[i]);
 }
 
+void DividePlayerParty(void)
+{
+    int i;
+    int slot = 0;
+    int aliveCount = 0;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gSaveBlock1Ptr->playerParty[i];
+
+        if (GetMonData(mon, MON_DATA_SPECIES, 0) != SPECIES_NONE
+         && !GetMonData(mon, MON_DATA_IS_EGG, 0)
+         && GetMonData(mon, MON_DATA_HP, 0) != 0)
+            aliveCount++;
+    }
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gSaveBlock1Ptr->playerParty[i];
+
+        if (GetMonData(mon, MON_DATA_SPECIES, 0) == SPECIES_NONE
+         || GetMonData(mon, MON_DATA_IS_EGG, 0)
+         || GetMonData(mon, MON_DATA_HP, 0) == 0)
+            continue;
+
+        gPlayerParty[slot] = gSaveBlock1Ptr->playerParty[i];
+        slot++;
+
+        if (slot < MULTI_PARTY_SIZE && slot * 2 >= aliveCount)
+        {
+            while (slot < MULTI_PARTY_SIZE)
+            {
+                ZeroMonData(&gPlayerParty[slot]);
+                slot++;
+            }
+        }
+    }
+    
+    while (slot <= PARTY_SIZE)
+    {
+        ZeroMonData(&gPlayerParty[slot]);
+        slot++;
+    }
+}
+
 void LoadPlayerParty(void)
 {
     int i;
@@ -250,6 +295,32 @@ void LoadPlayerPartyAfterLinkMultiBattle(void)
     {
         gPlayerParty[slot] = gSaveBlock1Ptr->playerParty[slot];
         slot--;
+    }
+
+    gPlayerPartyCount = gSaveBlock1Ptr->playerPartyCount;
+}
+
+void LoadPlayerPartyAfterCrowdControlBattle(void) 
+{
+    int i = 0, j = 0;
+
+    // update team in gSaveBlock1Ptr->playerParty
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gSaveBlock1Ptr->playerParty[i];
+        u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, 0);
+        
+        for (j = 0; j < PARTY_SIZE; j++)
+        {
+            if (GetMonData(&gPlayerParty[j], MON_DATA_PERSONALITY, 0) == personality)
+                gSaveBlock1Ptr->playerParty[i] = gPlayerParty[j];
+        }
+    }
+
+    // copy team to gPlayerParty
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        gPlayerParty[i] = gSaveBlock1Ptr->playerParty[i];
     }
 
     gPlayerPartyCount = gSaveBlock1Ptr->playerPartyCount;

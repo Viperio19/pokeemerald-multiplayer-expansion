@@ -1,25 +1,6 @@
 LinkMultiBattle_EventScript_TryNoIntroLinkMultiBattle::
 	setflag FLAG_NO_INTRO_MUTLI_BATTLE
-	goto LinkMultiBattle_EventScript_ChoosePokemon
-
-LinkMultiBattle_EventScript_ChoosePokemon::
-	special SavePlayerParty
-	setvar VAR_FRONTIER_BATTLE_MODE, NOT_FRONTIER_MODE_LINK_MULTIS
-	fadescreen FADE_TO_BLACK
-	setvar VAR_0x8004, FRONTIER_LVL_OPEN
-	setvar VAR_0x8005, MULTI_PARTY_SIZE
-	special ChooseHalfPartyForBattle
-	waitstate
-	goto_if_eq VAR_RESULT, 0, LinkMultiBattle_EventScript_DoRegularBattle
-	goto LinkMultiBattle_EventScript_PrepareParty
-
-LinkMultiBattle_EventScript_PrepareParty::
-	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
-	setvar VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER
-	setvar VAR_0x8005, MULTI_PARTY_SIZE
-	special CallFrontierUtilFunc
 	goto LinkMultiBattle_EventScript_TryConnectForLinkMultiBattle
-	end
 
 LinkMultiBattle_EventScript_TryConnectForLinkMultiBattle::
 	specialvar VAR_RESULT, IsWirelessAdapterConnected
@@ -123,7 +104,9 @@ LinkMultiBattle_EventScript_DoRegularNoIntroBattle::
 LinkMultiBattle_EventScript_DoLinkMultiBattle::
 	message LinkMultiBattle_Text_InitiatingLinkBattle
 	waitmessage
-	special DoLinkMultiBattle
+	special SavePlayerParty
+	special DividePlayerParty
+	special DoCrowdControlBattle
 	waitstate
 	special SavePlayerParty
 	tower_closelink

@@ -56,6 +56,7 @@ gSpecials::
 	def_special GetLinkPartnerNames
 	def_special SpawnLinkPartnerObjectEvent
 	def_special SavePlayerParty
+	def_special DividePlayerParty
 	def_special LoadPlayerParty
 	def_special ChooseHalfPartyForBattle
 	def_special Script_ShowLinkTrainerCard
@@ -565,3 +566,4 @@ gSpecials::
 	def_special GetCodeFeedback
 	def_special SetHiddenNature
 	def_special DoLinkMultiBattle
+	def_special DoCrowdControlBattle

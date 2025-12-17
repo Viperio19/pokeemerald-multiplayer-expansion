@@ -196,7 +196,7 @@ static void LinkPartnerHandleEndLinkBattle(u32 battler)
     BtlController_Complete(battler);
     gBattlerControllerFuncs[battler] = SetBattleEndCallbacks;
 
-    LoadPlayerPartyAfterLinkMultiBattle();
+    LoadPlayerParty();
 
     if (gBattleOutcome == B_OUTCOME_WON)
     {

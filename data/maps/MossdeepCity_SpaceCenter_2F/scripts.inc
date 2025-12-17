@@ -239,7 +239,7 @@ MossdeepCity_SpaceCenter_2F_EventScript_AskLinkMultiBattle::
 	msgbox EventScript_Text_BattleWithOtherPlayer, MSGBOX_YESNO
 	applymovement VAR_LAST_TALKED, Common_Movement_WalkInPlaceFasterDown
 	waitmovement 0
-	goto_if_eq VAR_RESULT, YES, LinkMultiBattle_EventScript_ChoosePokemon
+	goto_if_eq VAR_RESULT, YES, LinkMultiBattle_EventScript_TryConnectForLinkMultiBattle
 	goto MossdeepCity_SpaceCenter_2F_EventScript_ChoosePartyForMultiBattle
 
 MossdeepCity_SpaceCenter_2F_EventScript_ChoosePartyForMultiBattle::

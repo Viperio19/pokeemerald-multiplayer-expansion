@@ -2343,7 +2343,7 @@ static void PlayerHandleEndLinkBattle(u32 battler)
     BtlController_Complete(battler);
     gBattlerControllerFuncs[battler] = SetBattleEndCallbacks;
 
-    LoadPlayerPartyAfterLinkMultiBattle();
+    LoadPlayerPartyAfterCrowdControlBattle();
 }
 
 static void Controller_WaitForDebug(u32 battler)
