@@ -5344,12 +5344,16 @@ void BattleTurnPassed(void)
 
     TurnValuesCleanUp(TRUE);
 
+    FlagSet(FLAG_END_OF_TURN);
+
     if (gBattleOutcome == 0 && DoEndTurnEffects())
         return;
     if (BattleArenaTurnEnd())
         return;
     if (HandleFaintedMonActions())
         return;
+
+    FlagClear(FLAG_END_OF_TURN);
 
     gBattleStruct->faintedActionsState = 0;
 

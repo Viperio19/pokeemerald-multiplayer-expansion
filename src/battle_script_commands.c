@@ -4275,9 +4275,10 @@ static void Cmd_tryfaintmon(void)
                 if (metLocation == GetMonData(GetBattlerMon(partner), MON_DATA_MET_LOCATION, NULL) && gBattleMons[partner].hp != 0)
                 {
                     gBattlerAttacker = partner;
+                    gBattlerTarget = battler;
                     BattleScriptPush(gBattlescriptCurrInstr);
                     gBattleStruct->moveDamage[gBattlerAttacker] = gBattleMons[gBattlerAttacker].hp;
-                    gBattlescriptCurrInstr = BattleScript_LinkedPokemonFaintsOnScreen;
+                    gBattlescriptCurrInstr = FlagGet(FLAG_END_OF_TURN) ? BattleScript_LinkedPokemonFaintsOnScreenEndOfTurn : BattleScript_LinkedPokemonFaintsOnScreen;
                 }
                 else
                 {
@@ -4285,10 +4286,12 @@ static void Cmd_tryfaintmon(void)
                     for (i = 0; i < PARTY_SIZE; i++)
                     {
                         if (i != gBattlerPartyIndexes[B_POSITION_PLAYER_LEFT] && i != gBattlerPartyIndexes[B_POSITION_PLAYER_RIGHT]
-                            && metLocation == GetMonData(&gPlayerParty[i], MON_DATA_MET_LOCATION, FALSE))
+                            && metLocation == GetMonData(&gPlayerParty[i], MON_DATA_MET_LOCATION, FALSE)
+                            && GetMonData(&gPlayerParty[i], MON_DATA_HP, FALSE) != 0)
                         {
                             u16 zero = 0;
                             SetMonData(&gPlayerParty[i], MON_DATA_HP, &zero);
+                            gBattlerTarget = battler;
 
                             GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, gBattleTextBuff1);
                             StringGet_Nickname(gBattleTextBuff1);

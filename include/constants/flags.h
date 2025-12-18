@@ -45,8 +45,8 @@
 
 #define FLAG_NO_INTRO_MUTLI_BATTLE          0x20
 #define FLAG_STEVEN_MULTI_BATTLE            0x21
+#define FLAG_END_OF_TURN                    0x22
 
-#define FLAG_UNUSED_0x022    0x22 // Unused Flag
 #define FLAG_UNUSED_0x023    0x23 // Unused Flag
 #define FLAG_UNUSED_0x024    0x24 // Unused Flag
 #define FLAG_UNUSED_0x025    0x25 // Unused Flag
