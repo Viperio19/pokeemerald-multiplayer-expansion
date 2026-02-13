@@ -2245,7 +2245,7 @@ void BufferStringBattle(enum StringID stringID, u32 battler)
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
                 {
-                    if (gBattleScripting.battler == 1)
+                    if (BATTLE_TYPE_MULTIPLAYER_2_VS_1 || gBattleScripting.battler == 1)
                         stringPtr = sText_Trainer1SentOutPkmn2;
                     else
                         stringPtr = sText_Trainer2SentOutPkmn;

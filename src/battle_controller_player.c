@@ -60,7 +60,7 @@ static void PlayerHandleChooseAction(u32 battler);
 static void PlayerHandleYesNoBox(u32 battler);
 static void PlayerHandleChooseItem(u32 battler);
 static void PlayerHandleChoosePokemon(u32 battler);
-static void PlayerHandleCmd23(u32 battler);
+// static void PlayerHandleCmd23(u32 battler);
 static void PlayerHandleStatusXor(u32 battler);
 static void PlayerHandleDMA3Transfer(u32 battler);
 static void PlayerHandlePlayBGM(u32 battler);
@@ -122,7 +122,7 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32 battler) =
     [CONTROLLER_CHOOSEMOVE]               = PlayerHandleChooseMove,
     [CONTROLLER_OPENBAG]                  = PlayerHandleChooseItem,
     [CONTROLLER_CHOOSEPOKEMON]            = PlayerHandleChoosePokemon,
-    [CONTROLLER_23]                       = PlayerHandleCmd23,
+    [CONTROLLER_FAINTLINKEDPOKEMON]       = BtlController_HandleFaintLinkedPokemon,
     [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthBarUpdate,
     [CONTROLLER_EXPUPDATE]                = PlayerHandleExpUpdate,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
@@ -2177,12 +2177,12 @@ static void PlayerHandleChoosePokemon(u32 battler)
     }
 }
 
-static void PlayerHandleCmd23(u32 battler)
-{
-    BattleStopLowHpSound();
-    BeginNormalPaletteFade(PALETTES_ALL, 2, 0, 16, RGB_BLACK);
-    BtlController_Complete(battler);
-}
+// static void PlayerHandleCmd23(u32 battler)
+// {
+//     BattleStopLowHpSound();
+//     BeginNormalPaletteFade(PALETTES_ALL, 2, 0, 16, RGB_BLACK);
+//     BtlController_Complete(battler);
+// }
 
 void PlayerHandleExpUpdate(u32 battler)
 {
