@@ -232,7 +232,7 @@ enum
     CONTROLLER_CHOOSEMOVE,
     CONTROLLER_OPENBAG,
     CONTROLLER_CHOOSEPOKEMON,
-    CONTROLLER_23,
+    CONTROLLER_FAINTLINKEDPOKEMON,
     CONTROLLER_HEALTHBARUPDATE,
     CONTROLLER_EXPUPDATE,
     CONTROLLER_STATUSICONUPDATE,
@@ -300,6 +300,7 @@ void BtlController_EmitYesNoBox(u32 battler, u32 bufferId);
 void BtlController_EmitChooseMove(u32 battler, u32 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData);
 void BtlController_EmitChooseItem(u32 battler, u32 bufferId, u8 *battlePartyOrder);
 void BtlController_EmitChoosePokemon(u32 battler, u32 bufferId, u8 caseId, u8 slotId, u16 abilityId, u8 battlerPreventingSwitchout, u8 *data);
+void BtlController_EmitFaintLinkedPokemon(u32 battler, u32 bufferId, u32 personality);
 void BtlController_EmitHealthBarUpdate(u32 battler, u32 bufferId, u16 hpValue);
 void BtlController_EmitExpUpdate(u32 battler, u32 bufferId, u8 partyId, s32 expPoints);
 void BtlController_EmitStatusIconUpdate(u32 battler, u32 bufferId, u32 status);
@@ -351,6 +352,7 @@ void BtlController_HandleBallThrowAnim(u32 battler, u32 target, u32 animId, bool
 void BtlController_HandleMoveAnimation(u32 battler);
 void BtlController_HandlePrintString(u32 battler);
 void BtlController_HandlePrintStringPlayerOnly(u32 battler);
+void BtlController_HandleFaintLinkedPokemon(u32 battler);
 void BtlController_HandleHealthBarUpdate(u32 battler);
 void DoStatusIconUpdate(u32 battler);
 void BtlController_HandleStatusIconUpdate(u32 battler);

@@ -223,10 +223,11 @@ MossdeepCity_SpaceCenter_2F_Movement_StevenFightSouth:
 	step_end
 
 MossdeepCity_SpaceCenter_2F_EventScript_ReadyForBattlePrompt::
+	setflag FLAG_STEVEN_MULTI_BATTLE
 	applymovement VAR_LAST_TALKED, Common_Movement_FacePlayer
 	waitmovement 0
 	msgbox MossdeepCity_SpaceCenter_2F_Text_StevenAreYouReadyToBattle, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, YES, MossdeepCity_SpaceCenter_2F_EventScript_ChoosePartyForMultiBattle
+	goto_if_eq VAR_RESULT, YES, MossdeepCity_SpaceCenter_2F_EventScript_AskLinkMultiBattle
 	msgbox MossdeepCity_SpaceCenter_2F_Text_StevenHurryGetReadyQuickly, MSGBOX_DEFAULT
 	closemessage
 	applymovement VAR_LAST_TALKED, Common_Movement_WalkInPlaceFasterDown
@@ -234,9 +235,16 @@ MossdeepCity_SpaceCenter_2F_EventScript_ReadyForBattlePrompt::
 	releaseall
 	end
 
-MossdeepCity_SpaceCenter_2F_EventScript_ChoosePartyForMultiBattle::
+MossdeepCity_SpaceCenter_2F_EventScript_AskLinkMultiBattle::
+	msgbox EventScript_Text_BattleWithOtherPlayer, MSGBOX_YESNO
 	applymovement VAR_LAST_TALKED, Common_Movement_WalkInPlaceFasterDown
 	waitmovement 0
+	goto_if_eq VAR_RESULT, YES, LinkMultiBattle_EventScript_ChoosePokemon
+	goto MossdeepCity_SpaceCenter_2F_EventScript_ChoosePartyForMultiBattle
+
+MossdeepCity_SpaceCenter_2F_EventScript_ChoosePartyForMultiBattle::
+	clearflag FLAG_STEVEN_MULTI_BATTLE
+	setvar VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_MULTIS
 	special SavePlayerParty
 	fadescreen FADE_TO_BLACK
 	special ChooseHalfPartyForBattle
@@ -254,6 +262,7 @@ MossdeepCity_SpaceCenter_2F_EventScript_DoStevenMultiBattle::
 	waitstate
 
 MossdeepCity_SpaceCenter_2F_EventScript_DefeatedMaxieTabitha::
+	clearflag FLAG_STEVEN_MULTI_BATTLE
 	msgbox MossdeepCity_SpaceCenter_2F_Text_MaxieWeFailedIsAquaAlsoMisguided, MSGBOX_DEFAULT
 	closemessage
 	delay 20

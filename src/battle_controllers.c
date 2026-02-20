@@ -69,6 +69,7 @@ void HandleLinkBattleSetup(void)
 void SetUpBattleVarsAndBirchZigzagoon(void)
 {
     s32 i;
+    u16 species;
 
     gBattleMainFunc = BeginBattleIntroDummy;
 
@@ -89,7 +90,10 @@ void SetUpBattleVarsAndBirchZigzagoon(void)
     if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
     {
         ZeroEnemyPartyMons();
-        CreateMon(&gEnemyParty[0], SPECIES_ZIGZAGOON, 2, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
+        species = SPECIES_ZIGZAGOON;
+        if (gSaveBlock2Ptr->randomizeWildPkmn != OPTIONS_RANDOM_NO)
+            species = GetRandomSpecies(species, i, gSaveBlock2Ptr->randomizeWildPkmn == OPTIONS_RANDOM_SPECIAL);
+        CreateMon(&gEnemyParty[0], species, 2, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
         i = 0;
         SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &i);
     }
@@ -145,7 +149,7 @@ static void InitBtlControllersInternal(void)
     else
         gBattlersCount = MAX_BATTLERS_COUNT;
 
-    if ((gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
+    if ((gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_MULTIPLAYER))
         || !isMulti
         || (IsMultibattleTest())
         || (!isLink && !isRecorded)
@@ -267,7 +271,8 @@ static void InitBtlControllersInternal(void)
             gBattlerPartyIndexes[0] = 0;
             gBattlerPartyIndexes[1] = 0;
             gBattlerPartyIndexes[2] = 3;
-            if (!isLink && isInGamePartner && (BATTLE_TWO_VS_ONE_OPPONENT || WILD_DOUBLE_BATTLE))
+            if ((!isLink && isInGamePartner && (BATTLE_TWO_VS_ONE_OPPONENT || WILD_DOUBLE_BATTLE))
+                || ((gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER) && BATTLE_TWO_VS_ONE_OPPONENT))
                 gBattlerPartyIndexes[3] = 1;
             else
                 gBattlerPartyIndexes[3] = 3;
@@ -617,7 +622,7 @@ static void Task_HandleSendLinkBuffersData(u8 taskId)
         }
         else
         {
-            if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
+            if (gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER | BATTLE_TYPE_MULTIPLAYER))
                 numPlayers = 2;
             else
                 numPlayers = (gBattleTypeFlags & BATTLE_TYPE_MULTI) ? 4 : 2;
@@ -1073,13 +1078,14 @@ void BtlController_EmitChoosePokemon(u32 battler, u32 bufferId, u8 caseId, u8 sl
     PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, 9);  // Only 7 bytes were written.
 }
 
-static void UNUSED BtlController_EmitCmd23(u32 battler, u32 bufferId)
+void BtlController_EmitFaintLinkedPokemon(u32 battler, u32 bufferId, u32 personality)
 {
-    gBattleResources->transferBuffer[0] = CONTROLLER_23;
-    gBattleResources->transferBuffer[1] = CONTROLLER_23;
-    gBattleResources->transferBuffer[2] = CONTROLLER_23;
-    gBattleResources->transferBuffer[3] = CONTROLLER_23;
-    PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, 4);
+    gBattleResources->transferBuffer[0] = CONTROLLER_FAINTLINKEDPOKEMON;
+    gBattleResources->transferBuffer[1] = personality;
+    gBattleResources->transferBuffer[2] = (personality & 0x0000FF00) >> 8;
+    gBattleResources->transferBuffer[3] = (personality & 0x00FF0000) >> 16;
+    gBattleResources->transferBuffer[4] = (personality & 0xFF000000) >> 24;
+    PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, 5);
 }
 
 // why is the argument u16 if it's being cast to s16 anyway?
@@ -2580,6 +2586,23 @@ void BtlController_HandlePrintStringPlayerOnly(u32 battler)
         BtlController_Complete(battler);
 }
 
+void BtlController_HandleFaintLinkedPokemon(u32 battler)
+{
+    u32 personality = gBattleResources->bufferA[battler][1] | (gBattleResources->bufferA[battler][2] << 8) | (gBattleResources->bufferA[battler][3] << 16) | (gBattleResources->bufferA[battler][4] << 24);
+
+    for (u8 i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, FALSE) == personality)
+        {
+            u16 zero = 0;
+            SetMonData(&gPlayerParty[i], MON_DATA_HP, &zero);
+            break;
+        }
+    }
+
+    BtlController_Complete(battler);
+}
+
 void BtlController_HandleHealthBarUpdate(u32 battler)
 {
     s32 maxHP, curHP;
@@ -2802,7 +2825,7 @@ static bool32 TwoMonsAtSendOut(u32 battler)
     }
     else
     {
-        if ((!TwoOpponentIntroMons(battler) || (gBattleTypeFlags & BATTLE_TYPE_MULTI)) && !BATTLE_TWO_VS_ONE_OPPONENT)
+        if ((!TwoOpponentIntroMons(battler) || (gBattleTypeFlags & BATTLE_TYPE_MULTI)) && !(gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER))
             return FALSE;
         else if ((gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) || (BATTLE_TWO_VS_ONE_OPPONENT && !TwoOpponentIntroMons(battler)))
             return FALSE;

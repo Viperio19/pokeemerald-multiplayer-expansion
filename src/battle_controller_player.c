@@ -15,6 +15,7 @@
 #include "item.h"
 #include "item_menu.h"
 #include "link.h"
+#include "load_save.h"
 #include "main.h"
 #include "m4a.h"
 #include "palette.h"
@@ -60,7 +61,7 @@ static void PlayerHandleChooseAction(u32 battler);
 static void PlayerHandleYesNoBox(u32 battler);
 static void PlayerHandleChooseItem(u32 battler);
 static void PlayerHandleChoosePokemon(u32 battler);
-static void PlayerHandleCmd23(u32 battler);
+// static void PlayerHandleCmd23(u32 battler);
 static void PlayerHandleStatusXor(u32 battler);
 static void PlayerHandleDMA3Transfer(u32 battler);
 static void PlayerHandlePlayBGM(u32 battler);
@@ -122,7 +123,7 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32 battler) =
     [CONTROLLER_CHOOSEMOVE]               = PlayerHandleChooseMove,
     [CONTROLLER_OPENBAG]                  = PlayerHandleChooseItem,
     [CONTROLLER_CHOOSEPOKEMON]            = PlayerHandleChoosePokemon,
-    [CONTROLLER_23]                       = PlayerHandleCmd23,
+    [CONTROLLER_FAINTLINKEDPOKEMON]       = BtlController_HandleFaintLinkedPokemon,
     [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthBarUpdate,
     [CONTROLLER_EXPUPDATE]                = PlayerHandleExpUpdate,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
@@ -1164,6 +1165,40 @@ void HandleMoveSwitching(u32 battler)
     }
 }
 
+static void SetMultiLinkBattleEndCallbacks(u32 battler)
+{
+    if (gWirelessCommType == 0)
+    {
+        if (gReceivedRemoteLinkPlayers == 0)
+        {
+            m4aSongNumStop(SE_LOW_HEALTH);
+            gMain.inBattle = FALSE;
+            gMain.callback1 = gPreBattleCallback1;
+            SetMainCallback2(gMain.savedCallback);
+            ResetSpriteData();
+            FreeAllWindowBuffers();
+            FreeMonSpritesGfx();
+            FreeBattleResources();
+            FreeBattleSpritesData();
+        }
+    }
+    else
+    {
+        if (IsLinkTaskFinished())
+        {
+            m4aSongNumStop(SE_LOW_HEALTH);
+            gMain.inBattle = FALSE;
+            gMain.callback1 = gPreBattleCallback1;
+            SetMainCallback2(gMain.savedCallback);
+            ResetSpriteData();
+            FreeAllWindowBuffers();
+            FreeMonSpritesGfx();
+            FreeBattleResources();
+            FreeBattleSpritesData();
+        }
+    }
+}
+
 static void SetLinkBattleEndCallbacks(u32 battler)
 {
     if (gWirelessCommType == 0)
@@ -1208,7 +1243,7 @@ void SetBattleEndCallbacks(u32 battler)
                 else
                     SetLinkStandbyCallback();
 
-                gBattlerControllerFuncs[battler] = SetLinkBattleEndCallbacks;
+                gBattlerControllerFuncs[battler] = (gBattleTypeFlags & BATTLE_TYPE_MULTIPLAYER) ? SetMultiLinkBattleEndCallbacks : SetLinkBattleEndCallbacks;
             }
         }
         else
@@ -2161,12 +2196,12 @@ static void PlayerHandleChoosePokemon(u32 battler)
     }
 }
 
-static void PlayerHandleCmd23(u32 battler)
-{
-    BattleStopLowHpSound();
-    BeginNormalPaletteFade(PALETTES_ALL, 2, 0, 16, RGB_BLACK);
-    BtlController_Complete(battler);
-}
+// static void PlayerHandleCmd23(u32 battler)
+// {
+//     BattleStopLowHpSound();
+//     BeginNormalPaletteFade(PALETTES_ALL, 2, 0, 16, RGB_BLACK);
+//     BtlController_Complete(battler);
+// }
 
 void PlayerHandleExpUpdate(u32 battler)
 {
@@ -2326,6 +2361,8 @@ static void PlayerHandleEndLinkBattle(u32 battler)
     BeginFastPaletteFade(3);
     BtlController_Complete(battler);
     gBattlerControllerFuncs[battler] = SetBattleEndCallbacks;
+
+    LoadPlayerPartyAfterLinkMultiBattle();
 }
 
 static void Controller_WaitForDebug(u32 battler)

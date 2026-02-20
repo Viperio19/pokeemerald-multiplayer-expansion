@@ -1,6 +1,9 @@
 enum
 {
     PAGE_TITLE,
+    PAGE_MODDED_BY, // Viperio | custom credits
+    // PAGE_TESTED_BY,
+    PAGE_EXPANSION_BY,
     PAGE_DIRECTOR,
     PAGE_ART_DIRECTOR,
     PAGE_WORLD_DIRECTOR,
@@ -63,7 +66,15 @@ enum
 #define ENTRIES_PER_PAGE 5
 
 static const u8 sCreditsText_EmptyString[]                    = _("");
-static const u8 sCreditsText_PkmnEmeraldVersion[]             = _("POKéMON EMERALD VERSION");
+
+// Viperio | custom credits
+static const u8 sCreditsText_ModdedBy[]                       = _("Modded By");
+static const u8 sCreditsText_Viperio[]                        = _("Viperio");
+static const u8 sCreditsText_TestedBy[]                       = _("Tested By");
+static const u8 sCreditsText_ExpansionBy[]                    = _("Expansion By");
+static const u8 sCreditsText_RHH[]                            = _("RHH");
+
+static const u8 sCreditsText_PkmnEmeraldVersion[]             = _("POKéMON EMERALDS VERSION");
 static const u8 sCreditsText_Credits[]                        = _("Credits");
 static const u8 sCreditsText_ExecutiveDirector[]              = _("Executive Director");
 static const u8 sCreditsText_Director[]                       = _("Director");
@@ -222,6 +233,14 @@ static const u8 sCreditsText_NicolaPrattBarlow[]              = _("Nicola Pratt-
 static const u8 sCreditsText_ShellieDow[]                     = _("Shellie Dow");
 static const u8 sCreditsText_ErikJohnson[]                    = _("Erik Johnson");
 static const struct CreditsEntry sCreditsEntry_EmptyString                      = { 0, FALSE, sCreditsText_EmptyString};
+
+// Viperio | custom credits
+static const struct CreditsEntry sCreditsEntry_ModdedBy                         = { 7,  TRUE, sCreditsText_ModdedBy};
+static const struct CreditsEntry sCreditsEntry_Viperio                          = { 7, FALSE, sCreditsText_Viperio};
+static const struct CreditsEntry sCreditsEntry_TestedBy                         = { 7,  TRUE, sCreditsText_TestedBy};
+static const struct CreditsEntry sCreditsEntry_ExpansionBy                      = { 7,  TRUE, sCreditsText_ExpansionBy};
+static const struct CreditsEntry sCreditsEntry_RHH                              = { 7, FALSE, sCreditsText_RHH};
+
 static const struct CreditsEntry sCreditsEntry_PkmnEmeraldVersion               = { 7,  TRUE, sCreditsText_PkmnEmeraldVersion};
 static const struct CreditsEntry sCreditsEntry_Credits                          = {11,  TRUE, sCreditsText_Credits};
 static const struct CreditsEntry sCreditsEntry_ExecutiveDirector                = { 8,  TRUE, sCreditsText_ExecutiveDirector};
@@ -390,6 +409,28 @@ static const struct CreditsEntry *const sCreditsEntryPointerTable[PAGE_COUNT][EN
         &sCreditsEntry_Credits,
         _,
         _
+    },
+    // Viperio | custom credits
+    [PAGE_MODDED_BY] = {
+        _,
+        &sCreditsEntry_ModdedBy,
+        &sCreditsEntry_Viperio,
+        _,
+        _,
+    },
+    // [PAGE_TESTED_BY] = {
+    //     &sCreditsEntry_TestedBy,
+    //     _,
+    //     _,
+    //     _,
+    //     _,
+    // },
+    [PAGE_EXPANSION_BY] = {
+        _,
+        &sCreditsEntry_ExpansionBy,
+        &sCreditsEntry_RHH,
+        _,
+        _,
     },
     [PAGE_DIRECTOR] = {
         _,
