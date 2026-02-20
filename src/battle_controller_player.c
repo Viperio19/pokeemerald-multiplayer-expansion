@@ -132,7 +132,7 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32 battler) =
     [CONTROLLER_DATATRANSFER]             = BtlController_Empty,
     [CONTROLLER_DMA3TRANSFER]             = PlayerHandleDMA3Transfer,
     [CONTROLLER_PLAYBGM]                  = PlayerHandlePlayBGM,
-    [CONTROLLER_32]                       = BtlController_Empty,
+    [CONTROLLER_SETFIELDSTATUS]           = BtlController_HandleSetFieldStatus,
     [CONTROLLER_TWORETURNVALUES]          = PlayerHandleTwoReturnValues,
     [CONTROLLER_CHOSENMONRETURNVALUE]     = PlayerHandleChosenMonReturnValue,
     [CONTROLLER_ONERETURNVALUE]           = PlayerHandleOneReturnValue,
@@ -153,6 +153,7 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32 battler) =
     [CONTROLLER_RESETACTIONMOVESELECTION] = PlayerHandleResetActionMoveSelection,
     [CONTROLLER_ENDLINKBATTLE]            = PlayerHandleEndLinkBattle,
     [CONTROLLER_DEBUGMENU]                = PlayerHandleBattleDebug,
+    [CONTROLLER_SHOWABILITYPOPUP]         = BtlController_HandleShowAbilityPopUp,
     [CONTROLLER_TERMINATOR_NOP]           = BtlController_TerminatorNop
 };
 

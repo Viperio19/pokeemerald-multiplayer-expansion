@@ -3893,38 +3893,42 @@ void SetMoveEffect(u32 battler, u32 effectBattler, enum MoveEffect moveEffect, c
     case MOVE_EFFECT_ELECTRIC_TERRAIN:
     case MOVE_EFFECT_PSYCHIC_TERRAIN:
     {
-        u32 statusFlag = 0;
         switch (moveEffect)
         {
             case MOVE_EFFECT_MISTY_TERRAIN:
-                statusFlag = STATUS_FIELD_MISTY_TERRAIN;
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TERRAIN_SET_MISTY;
+                if (TryChangeBattleTerrain(gBattlerAttacker, STATUS_FIELD_MISTY_TERRAIN))
+                {
+                    BattleScriptPush(battleScript);
+                    gBattlescriptCurrInstr = BattleScript_EffectSetMistyTerrain;
+                }
                 break;
             case MOVE_EFFECT_GRASSY_TERRAIN:
-                statusFlag = STATUS_FIELD_GRASSY_TERRAIN;
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TERRAIN_SET_GRASSY;
+                if (TryChangeBattleTerrain(gBattlerAttacker, STATUS_FIELD_GRASSY_TERRAIN))
+                {
+                    BattleScriptPush(battleScript);
+                    gBattlescriptCurrInstr = BattleScript_EffectSetGrassyTerrain;
+                }
                 break;
             case MOVE_EFFECT_ELECTRIC_TERRAIN:
-                statusFlag = STATUS_FIELD_ELECTRIC_TERRAIN;
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TERRAIN_SET_ELECTRIC;
+                if (TryChangeBattleTerrain(gBattlerAttacker, STATUS_FIELD_ELECTRIC_TERRAIN))
+                {
+                    BattleScriptPush(battleScript);
+                    gBattlescriptCurrInstr = BattleScript_EffectSetElectricTerrain;
+                }
                 break;
             case MOVE_EFFECT_PSYCHIC_TERRAIN:
-                statusFlag = STATUS_FIELD_PSYCHIC_TERRAIN;
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TERRAIN_SET_PSYCHIC;
+                if (TryChangeBattleTerrain(gBattlerAttacker, STATUS_FIELD_PSYCHIC_TERRAIN))
+                {
+                    BattleScriptPush(battleScript);
+                    gBattlescriptCurrInstr = BattleScript_EffectSetPsychicTerrain;
+                }
                 break;
             default:
                 break;
-        }
-        if (!(gFieldStatuses & statusFlag) && statusFlag != 0)
-        {
-            gFieldStatuses &= ~STATUS_FIELD_TERRAIN_ANY;
-            gFieldStatuses |= statusFlag;
-            if (GetBattlerHoldEffect(gBattlerAttacker) == HOLD_EFFECT_TERRAIN_EXTENDER)
-                gFieldTimers.terrainTimer = 8;
-            else
-                gFieldTimers.terrainTimer = 5;
-            BattleScriptPush(battleScript);
-            gBattlescriptCurrInstr = BattleScript_EffectSetTerrain;
         }
         break;
     }
@@ -17435,6 +17439,10 @@ void BS_ShowAbilityPopup(void)
 {
     NATIVE_ARGS();
     CreateAbilityPopUp(gBattlerAbility, gBattleMons[gBattlerAbility].ability, (IsDoubleBattle()) != 0);
+
+    BtlController_EmitShowAbilityPopUp(gBattlerAbility, B_COMM_TO_CONTROLLER);
+    MarkBattlerForControllerExec(gBattlerAbility);
+
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
@@ -18245,4 +18253,18 @@ void BS_UndoDynamax(void)
     }
 
     gBattlescriptCurrInstr = cmd->nextInstr;
+}
+
+void BS_SetFieldStatus(void)
+{
+    NATIVE_ARGS(u32 statusFlag);
+    u32 statusFlag = cmd->statusFlag;
+
+    if (gBattleControllerExecFlags == 0)
+    {
+        BtlController_EmitSetFieldStatus(gBattlerAttacker, B_COMM_TO_CONTROLLER, statusFlag);
+        MarkBattlerForControllerExec(gBattlerAttacker);
+
+        gBattlescriptCurrInstr = cmd->nextInstr;
+    }
 }

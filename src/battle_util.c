@@ -3857,7 +3857,7 @@ bool32 TryFieldEffects(enum FieldEffectCases caseId)
         if (effect)
         {
             if (isTerrain)
-                BattleScriptPushCursorAndCallback(BattleScript_OverworldTerrain);
+                BattleScriptPushCursorAndCallback(BattleScript_OverworldPsychicTerrain);
             else
                 BattleScriptPushCursorAndCallback(BattleScript_OverworldStatusStarts);
         }
@@ -3871,7 +3871,7 @@ bool32 TryFieldEffects(enum FieldEffectCases caseId)
             gFieldStatuses = STATUS_FIELD_ELECTRIC_TERRAIN;
             gFieldTimers.terrainTimer = 0;
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TERRAIN_SET_ELECTRIC;
-            BattleScriptPushCursorAndCallback(BattleScript_OverworldTerrain);
+            BattleScriptPushCursorAndCallback(BattleScript_OverworldElectricTerrain);
             effect = TRUE;
         }
         else if (B_OVERWORLD_FOG >= GEN_8
@@ -3881,7 +3881,7 @@ bool32 TryFieldEffects(enum FieldEffectCases caseId)
             gFieldStatuses = STATUS_FIELD_MISTY_TERRAIN;
             gFieldTimers.terrainTimer = 0;
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TERRAIN_SET_MISTY;
-            BattleScriptPushCursorAndCallback(BattleScript_OverworldTerrain);
+            BattleScriptPushCursorAndCallback(BattleScript_OverworldMistyTerrain);
             effect = TRUE;
         }
         break;

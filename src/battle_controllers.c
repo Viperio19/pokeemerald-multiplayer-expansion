@@ -1181,16 +1181,14 @@ static void UNUSED BtlController_EmitPlayBGM(u32 battler, u32 bufferId, u16 song
     PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, songId + 3);
 }
 
-static void UNUSED BtlController_EmitCmd32(u32 battler, u32 bufferId, u16 size, void *data)
+void BtlController_EmitSetFieldStatus(u32 battler, u32 bufferId, u32 statusFlag)
 {
-    s32 i;
-
-    gBattleResources->transferBuffer[0] = CONTROLLER_32;
-    gBattleResources->transferBuffer[1] = size;
-    gBattleResources->transferBuffer[2] = (size & 0xFF00) >> 8;
-    for (i = 0; i < size; i++)
-        gBattleResources->transferBuffer[3 + i] = *(u8 *)(data++);
-    PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, size + 3);
+    gBattleResources->transferBuffer[0] = CONTROLLER_SETFIELDSTATUS;
+    gBattleResources->transferBuffer[1] = statusFlag;
+    gBattleResources->transferBuffer[2] = (statusFlag & 0x0000FF00) >> 8;
+    gBattleResources->transferBuffer[3] = (statusFlag & 0x00FF0000) >> 16;
+    gBattleResources->transferBuffer[4] = (statusFlag & 0xFF000000) >> 24;
+    PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, 5);
 }
 
 void BtlController_EmitTwoReturnValues(u32 battler, u32 bufferId, u8 ret8, u32 ret32)
@@ -1382,6 +1380,16 @@ void BtlController_EmitDebugMenu(u32 battler, u32 bufferId)
 {
     gBattleResources->transferBuffer[0] = CONTROLLER_DEBUGMENU;
     PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, 1);
+}
+
+void BtlController_EmitShowAbilityPopUp(u32 battler, u32 bufferId)
+{
+    gBattleResources->transferBuffer[0] = CONTROLLER_SHOWABILITYPOPUP;
+    gBattleResources->transferBuffer[1] = gBattlerAbility;
+    gBattleResources->transferBuffer[2] = gBattleMons[gBattlerAbility].ability;
+    gBattleResources->transferBuffer[3] = (gBattleMons[gBattlerAbility].ability & 0xFF00) >> 8;
+    gBattleResources->transferBuffer[4] = IsDoubleBattle() != 0;
+    PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, 5);
 }
 
 // Standardized Controller functions
@@ -2660,6 +2668,16 @@ void BtlController_HandleStatusAnimation(u32 battler)
     }
 }
 
+void BtlController_HandleSetFieldStatus(u32 battler)
+{
+    u32 statusFlag = gBattleResources->bufferA[battler][1] | (gBattleResources->bufferA[battler][2] << 8) | (gBattleResources->bufferA[battler][3] << 16) | (gBattleResources->bufferA[battler][4] << 24);
+
+    gFieldStatuses &= ~STATUS_FIELD_TERRAIN_ANY;
+    gFieldStatuses |= statusFlag;
+
+    BtlController_Complete(battler);
+}
+
 void BtlController_HandleHitAnimation(u32 battler)
 {
     if (gSprites[gBattlerSpriteIds[battler]].invisible == TRUE || (gTestRunnerHeadless && !gBattleTestRunnerState->forceMoveAnim))
@@ -2955,6 +2973,16 @@ void BtlController_HandleBattleAnimation(u32 battler)
         if (ShouldUpdateTvData(battler))
             BattleTv_SetDataBasedOnAnimation(animationId);
     }
+}
+
+void BtlController_HandleShowAbilityPopUp(u32 battler)
+{
+    u8 abilityBattler = gBattleResources->bufferA[battler][1];
+    u16 ability = gBattleResources->bufferA[battler][2] | (gBattleResources->bufferA[battler][3] << 8);
+    bool8 isDoubleBattle = gBattleResources->bufferA[battler][4];
+
+    CreateAbilityPopUp(abilityBattler, ability, isDoubleBattle);
+    BtlController_Complete(battler);
 }
 
 void AnimateMonAfterPokeBallFail(u32 battler)

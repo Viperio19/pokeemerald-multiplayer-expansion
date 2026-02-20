@@ -241,7 +241,7 @@ enum
     CONTROLLER_DATATRANSFER,
     CONTROLLER_DMA3TRANSFER,
     CONTROLLER_PLAYBGM,
-    CONTROLLER_32,
+    CONTROLLER_SETFIELDSTATUS,
     CONTROLLER_TWORETURNVALUES,
     CONTROLLER_CHOSENMONRETURNVALUE,
     CONTROLLER_ONERETURNVALUE,
@@ -262,6 +262,7 @@ enum
     CONTROLLER_RESETACTIONMOVESELECTION,
     CONTROLLER_ENDLINKBATTLE,
     CONTROLLER_DEBUGMENU,
+    CONTROLLER_SHOWABILITYPOPUP,
     /*new controllers should go here*/
     CONTROLLER_TERMINATOR_NOP,
     CONTROLLER_CMDS_COUNT
@@ -306,6 +307,7 @@ void BtlController_EmitExpUpdate(u32 battler, u32 bufferId, u8 partyId, s32 expP
 void BtlController_EmitStatusIconUpdate(u32 battler, u32 bufferId, u32 status);
 void BtlController_EmitStatusAnimation(u32 battler, u32 bufferId, bool8 isVolatile, u32 status);
 void BtlController_EmitDataTransfer(u32 battler, u32 bufferId, u16 size, void *data);
+void BtlController_EmitSetFieldStatus(u32 battler, u32 bufferId, u32 statusFlag);
 void BtlController_EmitTwoReturnValues(u32 battler, u32 bufferId, u8 ret8, u32 ret32);
 void BtlController_EmitChosenMonReturnValue(u32 battler, u32 bufferId, u8 partyId, u8 *battlePartyOrder);
 void BtlController_EmitOneReturnValue(u32 battler, u32 bufferId, u16 ret);
@@ -326,6 +328,7 @@ void BtlController_EmitLinkStandbyMsg(u32 battler, u32 bufferId, u8 mode, bool32
 void BtlController_EmitResetActionMoveSelection(u32 battler, u32 bufferId, u8 caseId);
 void BtlController_EmitEndLinkBattle(u32 battler, u32 bufferId, u8 battleOutcome);
 void BtlController_EmitDebugMenu(u32 battler, u32 bufferId);
+void BtlController_EmitShowAbilityPopUp(u32 battler, u32 bufferId);
 
 void BtlController_Complete(u32 battler); // Can be used for all the controllers.
 void BtlController_Empty(u32 battler); // Empty command, does nothing, only completes the execution.
@@ -357,6 +360,7 @@ void BtlController_HandleHealthBarUpdate(u32 battler);
 void DoStatusIconUpdate(u32 battler);
 void BtlController_HandleStatusIconUpdate(u32 battler);
 void BtlController_HandleStatusAnimation(u32 battler);
+void BtlController_HandleSetFieldStatus(u32 battler);
 void BtlController_HandleHitAnimation(u32 battler);
 void BtlController_HandlePlaySE(u32 battler);
 void BtlController_HandlePlayFanfareOrBGM(u32 battler);
@@ -369,6 +373,7 @@ void BtlController_HandleIntroTrainerBallThrow(u32 battler, u16 tagTrainerPal, c
 void BtlController_HandleDrawPartyStatusSummary(u32 battler, enum BattleSide side, bool32 considerDelay);
 void BtlController_HandleHidePartyStatusSummary(u32 battler);
 void BtlController_HandleBattleAnimation(u32 battler);
+void BtlController_HandleShowAbilityPopUp(u32 battler);
 
 // player controller
 void SetControllerToPlayer(u32 battler);
