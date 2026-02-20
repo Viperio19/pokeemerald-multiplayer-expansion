@@ -2469,3 +2469,8 @@
 	.macro tryabsorbtoxicspikesonfaint
 	callnative BS_TryAbsorbToxicSpikesOnFaint
 	.endm
+
+	.macro tryfaintlinkedmon battler:req
+	callnative BS_TryFaintLinkedMon
+	.byte \battler
+	.endm
