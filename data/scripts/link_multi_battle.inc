@@ -125,6 +125,7 @@ LinkMultiBattle_EventScript_DoLinkMultiBattle::
 	waitmessage
 	special DoLinkMultiBattle
 	waitstate
+	special LoadPartyItems
 	special SavePlayerParty
 	tower_closelink
 	goto_if_set FLAG_STEVEN_MULTI_BATTLE, MossdeepCity_SpaceCenter_2F_EventScript_DefeatedMaxieTabitha

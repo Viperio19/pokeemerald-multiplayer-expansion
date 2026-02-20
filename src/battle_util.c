@@ -9499,7 +9499,7 @@ u32 GetBattlerVisualSpecies(u32 battler)
     u32 illusionSpecies = GetIllusionMonSpecies(battler);
     if (illusionSpecies != SPECIES_NONE)
         return illusionSpecies;
-    return gBattleMons[battler].species;
+    return GetMonData(GetBattlerMon(battler), MON_DATA_SPECIES);
 }
 
 bool32 TryClearIllusion(u32 battler, enum AbilityEffect caseID)

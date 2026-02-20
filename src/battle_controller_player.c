@@ -695,6 +695,8 @@ void HandleInputChooseMove(u32 battler)
                 canSelectTarget = 1; // either selected or user
             if (moveTarget == (MOVE_TARGET_USER | MOVE_TARGET_ALLY) && IsBattlerAlive(BATTLE_PARTNER(battler)))
                 canSelectTarget = 1;
+            if (moveTarget == MOVE_TARGET_ALL_BATTLERS)
+                canSelectTarget = 0;
 
             if (moveInfo->currentPp[gMoveSelectionCursor[battler]] == 0)
             {
