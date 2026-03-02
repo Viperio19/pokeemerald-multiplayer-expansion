@@ -142,7 +142,7 @@ static const u8 gText_ButtonTypeNormal[]   = _("{COLOR GREEN}{SHADOW LIGHT_GREEN
 static const u8 gText_ButtonTypeLR[]       = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}LR");
 static const u8 gText_ButtonTypeLEqualsA[] = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}L=A");
 
-static const u8 gText_OptionMenuRandomizer[]      = _("RABDOMIZER");
+static const u8 gText_OptionMenuRandomizer[]      = _("RANDOMIZER");
 static const u8 gText_OptionMenuYes[]             = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}YES");
 static const u8 gText_OptionMenuNo[]              = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}NO");
 static const u8 gText_OptionMenuSimilarBST[]      = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}SMLR BST");

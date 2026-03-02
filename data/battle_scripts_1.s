@@ -5270,19 +5270,10 @@ BattleScript_DestinyBondTakesLife::
 BattleScript_LinkedPokemonFaintsOnScreen::
 	printstring STRINGID_PKMNISLINKED
 	waitmessage B_WAIT_TIME_LONG
-	healthbarupdate BS_ATTACKER, PASSIVE_HP_UPDATE
-	datahpupdate BS_ATTACKER, PASSIVE_HP_UPDATE
-	tryfaintmon BS_ATTACKER
+	healthbarupdate BS_SCRIPTING, PASSIVE_HP_UPDATE
+	datahpupdate BS_SCRIPTING, PASSIVE_HP_UPDATE
+	tryfaintmon BS_SCRIPTING
 	return
-
-BattleScript_LinkedPokemonFaintsOnScreenEndOfTurn::
-	printstring STRINGID_PKMNISLINKED
-	waitmessage B_WAIT_TIME_LONG
-	healthbarupdate BS_ATTACKER, PASSIVE_HP_UPDATE
-	datahpupdate BS_ATTACKER, PASSIVE_HP_UPDATE
-	tryfaintmon BS_ATTACKER
-	tryfaintmon BS_TARGET
-	end2
 
 BattleScript_LinkedPokemonFaintsOffScreen::
 	printstring STRINGID_LINKEDPKMNFAINTS

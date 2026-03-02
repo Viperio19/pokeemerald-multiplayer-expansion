@@ -17629,9 +17629,9 @@ void BS_TryFaintLinkedMon(void)
         if (metLocation == GetMonData(GetBattlerMon(partner), MON_DATA_MET_LOCATION, NULL) && IsBattlerAlive(partner))
         {
             fainted = TRUE;
-            gBattlerTarget = battler;
-            gBattlerAttacker = partner;
-            gBattleStruct->passiveHpUpdate[gBattlerAttacker] = gBattleMons[gBattlerAttacker].hp;
+            gEffectBattler = battler;
+            gBattleScripting.battler = partner;
+            gBattleStruct->passiveHpUpdate[gBattleScripting.battler] = gBattleMons[gBattleScripting.battler].hp;
             BattleScriptPush(cmd->nextInstr);
             gBattlescriptCurrInstr = BattleScript_LinkedPokemonFaintsOnScreen;
         }
@@ -17649,7 +17649,7 @@ void BS_TryFaintLinkedMon(void)
 
                     GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, gBattleTextBuff1);
                     
-                    gBattlerTarget = battler;
+                    gEffectBattler = battler;
                     BattleScriptPush(cmd->nextInstr);
                     gBattlescriptCurrInstr = BattleScript_LinkedPokemonFaintsOffScreen;
                     break;
