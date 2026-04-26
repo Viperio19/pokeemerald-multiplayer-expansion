@@ -4943,6 +4943,7 @@ bool32 NoAliveMonsForPlayer(void)
             return TRUE;
 
         HP_count = 0;
+        maxI = MULTI_PARTY_SIZE;
     }
 
     // Get total HP for the player's party to determine if the player has lost

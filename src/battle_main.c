@@ -4988,7 +4988,8 @@ static void DoBattleIntro(void)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
             {
-                gBattleStruct->eventState.battleIntro++;
+                if (!gBattleControllerExecFlags)
+                    gBattleStruct->eventState.battleIntro++;
             }
             else
             {
